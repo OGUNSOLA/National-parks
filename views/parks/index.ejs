@@ -1,0 +1,36 @@
+<% layout('layouts/boilerPlate') %>
+
+  <% for(let park of parks){ %>
+    <div class="card mb-3">
+      <div class="row">
+        <div class="col-md-4">
+          <img src="<%= park.images[0]%>" alt="park" class="img-fluid">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h3 class="card-text">
+              <%= park.name%>
+            </h3>
+            <p class="card-text">
+              <%= park.intro%>
+            </p>
+            <p class="card-text">
+              <small class="text-muted">
+                <%= park.location%>
+              </small>
+            </p>
+            <p class="card-text">
+              <small>
+                Author : <%=park.author.username%>
+              </small>
+            </p>
+            <p><a class="btn btn-primary" href="parks/<%=park._id%>">Show Details</a></p>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <%}%>

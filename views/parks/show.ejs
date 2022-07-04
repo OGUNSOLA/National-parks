@@ -1,0 +1,81 @@
+<% layout('layouts/boilerPlate') %>
+
+  <div class="row">
+    <div class="col-6 ">
+      <div class="card">
+        <% park.images.forEach((img,i)=>{ %>
+          <div class="mb-3">
+            <img src="<%= img%>" alt="park" class="d-block w-100">
+          </div>
+          <%}) %>
+
+            <div class="card-body">
+              <h5 class="card-title">
+                <%= park.name %>
+              </h5>
+              <p class="card-text">
+                <%= park.description %>
+              </p>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <%= park.location %>
+              </li>
+              <li class="list-group-item">
+                $<%= park.price %>/Night
+              </li>
+              <li class="list-group-item">Submitted by: <%= park.author.username%>
+              </li>
+            </ul>
+            <div class="card-body">
+              <% if (currentUser && park.author.equals(currentUser)){ %>
+                <a class="card-link btn btn-primary" href="/parks/<%= park.id%>/edit" class="card-link">EDIT</a>
+                <form class="d-inline" action="/parks/<%=park._id%>?_method=DELETE" method="POST">
+                  <button class="btn btn-danger">DELETE</button>
+                </form>
+                <% }%>
+
+                  <a class="card-link btn btn-primary" href="/parks" class="card-link">ALL PARKS</a>
+            </div>
+
+
+      </div>
+
+    </div>
+    <div class="col-6">
+      <h2 class="mt-3">Leave A Review</h2>
+      <form action="/parks/<%=park._id%>/reviews" method="POST" class="needs-validation" novalidate>
+        <div class="mb-3">
+          <label for="rating" class="form-label">Rating</label>
+          <input type="range" class="form-range" min="1" max="5" step="0.5" id="rating" name="rating">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="body">Review</label>
+          <textarea class="form-control" name="body" id="body" cols="30" rows="3" required></textarea>
+          <div class="valid-feedback">Looks good!</div>
+        </div>
+
+        <button class="btn btn-success mb-3">Submit Review</button>
+      </form>
+      <% for(let review of park.reviews){ %>
+        <div class=" card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">
+              <%= review.rating%>
+            </h5>
+            <p>
+              <%= review.body %>
+            </p>
+            <form action="/parks/<%=park._id%>/reviews/<%=review._id%>?_method=DELETE " method="POST">
+              <button class="btn-sm btn-danger">Delete</button>
+            </form>
+          </div>
+
+        </div>
+
+        <%}%>
+
+    </div>
+
+
+  </div>
