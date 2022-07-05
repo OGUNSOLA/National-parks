@@ -45,3 +45,15 @@ module.exports.isOwner = async (req, res, next) => {
   }
   next();
 };
+
+module.exports.isReviewOwner = async (req, res, next) => {
+  const { id, reviewid } = req.params;
+  const review = await Review.findById(reviewid);
+
+  if (!review.author.equals(req.user._id)) {
+    req.flash("error", "You do not have permission to delete");
+    return res.redirect(`/parks/${id}`);
+  }
+
+  next();
+};

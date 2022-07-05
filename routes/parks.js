@@ -40,7 +40,12 @@ router
   .get(
     asyncWrapper(async (req, res) => {
       const park = await NationalPark.findById(req.params.id)
-        .populate("reviews")
+        .populate({
+          path: "reviews",
+          populate: {
+            path: "author",
+          },
+        })
         .populate("author");
       if (!park) {
         req.flash("error", "Cannot find park");
