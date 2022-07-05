@@ -18,25 +18,34 @@ router
     res.render("parks/index", { parks });
   })
   .post(
+    // upload.array("image"),
+    // (req, res) => {
+    //   console.log(req.body, req.files);
+    //   res.send(req.body);
+    // }
+    isLoggedIn,
     upload.array("image"),
-    (req, res) => {
-      console.log(req.body, req.files);
-      res.send(req.body);
-    }
-    // isLoggedIn,
-    // validatePark,
-    // asyncWrapper(async (req, res, next) => {
-    //   const body = req.body;
-    //   if (!body) {
-    //     throw new ExpressError("Missing info", 400);
-    //     req.flash("error", "Campground not created");
-    //   }
-    //   const park = await new NationalPark(body);
-    //   park.author = req.user._id;
-    //   await park.save();
-    //   req.flash("success", "Campground created");
-    //   res.redirect(`/parks/${park._id}`);
-    // })
+    validatePark,
+
+    asyncWrapper(async (req, res, next) => {
+      const body = req.body;
+
+      if (!body) {
+        throw new ExpressError("Missing info", 400);
+        req.flash("error", "Campground not created");
+      }
+      const park = await new NationalPark(body);
+      park.images = req.files.map((file) => ({
+        url: file.path,
+        filename: file.filename,
+      }));
+      park.author = req.user._id;
+      console.log(park);
+      res.send(park);
+      //await park.save();
+      //req.flash("success", "Campground created");
+      // res.redirect(`/parks/${park._id}`);
+    })
   );
 
 router.get("/new", isLoggedIn, (req, res) => {

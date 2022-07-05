@@ -8,7 +8,12 @@ const review = require("./reviews");
 const parkSchema = new Schema({
   name: String,
   price: Number,
-  images: [String],
+  images: [
+    {
+      url: String,
+      filename: String,
+    },
+  ],
   intro: String,
   location: String,
   reviews: [
