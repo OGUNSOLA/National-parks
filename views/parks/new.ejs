@@ -2,7 +2,7 @@
   <div class="row">
     <h1 class="text-center">New Park</h1>
     <div class="col-md-6 offset-md-3">
-      <form action="/parks" method="POST" novalidate class="needs-validation">
+      <form action="/parks" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
         <div class="mb-3">
           <label class="form-label" for="name">Title</label>
           <input class="form-control" type="text" name="name" placeholder="name" id="title" required>
@@ -13,14 +13,14 @@
           <label class="form-label" for="location">Location</label>
           <input class="form-control" type="text" name="location" placeholder="location" id="location" required>
         </div>
-        <!-- <div class="mb-3">
+        <div class="mb-3">
           <div class="form-file custom-file">
             <input type="file" class="form-file-input" id="image" name="image" multiple>
             <label class="form-file-label" for="image">
               <span class="form-file-text custom-file-label">Browse to add more image(s)...</span>
             </label>
           </div>
-        </div> -->
+        </div>
 
 
         <div class="input-group flex-nowrap mb-3">

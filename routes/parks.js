@@ -7,6 +7,9 @@ const asyncWrapper = require("../utility/asyncError");
 const ExpressError = require("../utility/expressError");
 const { validatePark, isLoggedIn, isOwner } = require("../helpers/helper");
 const reviews = require("../models/reviews");
+const { storage } = require("../cloudinary");
+const multer = require("multer");
+const upload = multer({ storage });
 
 router
   .route("/")
@@ -15,20 +18,25 @@ router
     res.render("parks/index", { parks });
   })
   .post(
-    isLoggedIn,
-    validatePark,
-    asyncWrapper(async (req, res, next) => {
-      const body = req.body;
-      if (!body) {
-        throw new ExpressError("Missing info", 400);
-        req.flash("error", "Campground not created");
-      }
-      const park = await new NationalPark(body);
-      park.author = req.user._id;
-      await park.save();
-      req.flash("success", "Campground created");
-      res.redirect(`/parks/${park._id}`);
-    })
+    upload.array("image"),
+    (req, res) => {
+      console.log(req.body, req.files);
+      res.send(req.body);
+    }
+    // isLoggedIn,
+    // validatePark,
+    // asyncWrapper(async (req, res, next) => {
+    //   const body = req.body;
+    //   if (!body) {
+    //     throw new ExpressError("Missing info", 400);
+    //     req.flash("error", "Campground not created");
+    //   }
+    //   const park = await new NationalPark(body);
+    //   park.author = req.user._id;
+    //   await park.save();
+    //   req.flash("success", "Campground created");
+    //   res.redirect(`/parks/${park._id}`);
+    // })
   );
 
 router.get("/new", isLoggedIn, (req, res) => {
