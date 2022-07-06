@@ -10,6 +10,7 @@ const reviews = require("../models/reviews");
 const { storage } = require("../cloudinary");
 const multer = require("multer");
 const upload = multer({ storage });
+const { cloudinary } = require("../cloudinary");
 
 router
   .route("/")
@@ -18,11 +19,6 @@ router
     res.render("parks/index", { parks });
   })
   .post(
-    // upload.array("image"),
-    // (req, res) => {
-    //   console.log(req.body, req.files);
-    //   res.send(req.body);
-    // }
     isLoggedIn,
     upload.array("image"),
     validatePark,
@@ -40,11 +36,10 @@ router
         filename: file.filename,
       }));
       park.author = req.user._id;
-      console.log(park);
-      res.send(park);
-      //await park.save();
-      //req.flash("success", "Campground created");
-      // res.redirect(`/parks/${park._id}`);
+
+      await park.save();
+      req.flash("success", "Campground created");
+      res.redirect(`/parks/${park._id}`);
     })
   );
 
@@ -74,18 +69,39 @@ router
   .put(
     isLoggedIn,
     validatePark,
-
+    isOwner,
+    upload.array("image"),
     asyncWrapper(async (req, res, next) => {
       const { id } = req.params;
       const park = await NationalPark.findByIdAndUpdate(id, { ...req.body });
 
+      const imgs = req.files.map((file) => ({
+        url: file.path,
+        filename: file.filename,
+      }));
+      park.images.push(...imgs);
+      await park.save();
+      if (req.body.deleteImages) {
+        for (let filename of req.body.deleteImages) {
+          await cloudinary.uploader.destroy(filename);
+        }
+        await park.updateOne({
+          $pull: {
+            images: {
+              filename: {
+                $in: req.body.deleteImages,
+              },
+            },
+          },
+        });
+      }
       req.flash("success", "Campground updated");
       res.redirect(`/parks/${park._id}`);
     })
   )
   .delete(
     isLoggedIn,
-
+    isOwner,
     asyncWrapper(async (req, res, next) => {
       const { id } = req.params;
       await NationalPark.findByIdAndDelete(id);
@@ -100,7 +116,6 @@ router.get(
   isOwner,
   asyncWrapper(async (req, res) => {
     const { id } = req.params;
-    console.log(id);
     const park = await NationalPark.findById(id);
 
     res.render("parks/edit", { park });

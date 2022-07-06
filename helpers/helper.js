@@ -38,7 +38,6 @@ module.exports.isLoggedIn = (req, res, next) => {
 module.exports.isOwner = async (req, res, next) => {
   const { id } = req.params;
   const park = await NationalPark.findById(id);
-  console.log(park);
   if (!park.author.equals(req.user._id)) {
     req.flash("error", "You do not have permission to edit");
     return res.redirect(`/parks/${id}`);
