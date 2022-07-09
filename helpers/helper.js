@@ -6,13 +6,14 @@ const ExpressError = require("../utility/expressError");
 const Review = require("../models/reviews");
 
 module.exports.validatePark = (req, res, next) => {
-  const { error } = parkSchema.validate(req.body);
-  if (error) {
-    const msg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(msg, 400);
-  } else {
-    next();
-  }
+  // const { error } = parkSchema.validate(req.body);
+  // if (error) {
+  //   const msg = error.details.map((el) => el.message).join(",");
+  //   throw new ExpressError(msg, 400);
+  // } else {
+  //   next();
+  // }
+  next();
 };
 
 module.exports.validateReview = (req, res, next) => {

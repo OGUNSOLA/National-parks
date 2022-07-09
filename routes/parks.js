@@ -11,11 +11,15 @@ const { storage } = require("../cloudinary");
 const multer = require("multer");
 const upload = multer({ storage });
 const { cloudinary } = require("../cloudinary");
+const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
+const mapboxToken = process.env.mapboxToken;
+const geocoder = mbxGeocoding({ accessToken: mapboxToken });
 
 router
   .route("/")
   .get(async (req, res) => {
     const parks = await NationalPark.find({}).populate("author");
+    console.log(parks[0].images[0]);
     res.render("parks/index", { parks });
   })
   .post(
@@ -25,6 +29,13 @@ router
 
     asyncWrapper(async (req, res, next) => {
       const body = req.body;
+
+      const geoData = await geocoder
+        .forwardGeocode({
+          query: body.location,
+          limit: 1,
+        })
+        .send();
 
       if (!body) {
         throw new ExpressError("Missing info", 400);

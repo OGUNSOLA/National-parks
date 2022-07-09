@@ -26,17 +26,17 @@ const parkSchema = new Schema({
       ref: "Review",
     },
   ],
-  // geometry: {
-  //   // type: {
-  //   //   type: String,
-  //   //   enum: ["Point"],
-  //   //   //required: true,
-  //   // },
-  //   coordinates: {
-  //     type: [Number],
-  //     // required: true,
-  //   },
-  // },
+  geometry: {
+    type: {
+      type: String,
+      enum: ["Point"],
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
+  },
   author: {
     type: Schema.Types.ObjectId,
     ref: "Author",
