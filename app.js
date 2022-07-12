@@ -68,9 +68,15 @@ app.use((req, res, next) => {
   next();
 });
 
+
+
 app.use("/", authorRouter);
 app.use("/parks", parksRouter);
 app.use("/parks/:id/reviews", reviewRouter);
+
+app.get("/", (req,res)=>{
+  res.render("home")
+  })
 
 app.all("*", (req, res, next) => {
   next(new ExpressError("Page Not Found", 404));

@@ -4,7 +4,6 @@
 // ADD YOUR ACCESS TOKEN FROM
 // https://account.mapbox.com
 mapboxgl.accessToken = mapboxToken;
-console.log(park.geometry.coordinates);
 const map = new mapboxgl.Map({
   container: "map", // container ID
   style: "mapbox://styles/mapbox/streets-v11", // style URL
@@ -13,4 +12,9 @@ const map = new mapboxgl.Map({
   projection: "globe", // display the map as a 3D globe
 });
 
-new mapboxgl.Marker().setLngLat(park.geometry.coordinates).addTo(map);
+new mapboxgl.Marker()
+  .setLngLat(park.geometry.coordinates)
+  .setPopup(new mapboxgl.Popup().setHTML(`<h3>${park.name}</h3>`))
+  .addTo(map);
+
+map.addControl(new mapboxgl.NavigationControl({ showZoom: true }));

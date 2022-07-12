@@ -3,10 +3,8 @@
 const express = require("express");
 const router = express.Router();
 const NationalPark = require("../models/parks");
-const asyncWrapper = require("../utility/asyncError");
-const ExpressError = require("../utility/expressError");
+const asyncWrapper = require("../utility/asyncWrapper");
 const { validatePark, isLoggedIn, isOwner } = require("../helpers/helper");
-const reviews = require("../models/reviews");
 const { storage } = require("../cloudinary");
 const multer = require("multer");
 const upload = multer({ storage });
@@ -19,38 +17,65 @@ router
   .route("/")
   .get(async (req, res) => {
     const parks = await NationalPark.find({}).populate("author");
-    console.log(parks[0].images[0]);
     res.render("parks/index", { parks });
   })
   .post(
+    // isLoggedIn,
+    // upload.array("image"),
+    // validatePark,
+
+    // asyncWrapper(async (req, res, next) => {
+    //   const body = req.body;
+    //   const geoData = await geocoder
+    //     .forwardGeocode({
+    //       query: body.location,
+    //       limit: 1,
+    //     })
+    //     .send();
+
+    //   if (!body) {
+    //     throw new ExpressError("Missing info", 400);
+    //     req.flash("error", "park not created");
+    //   }
+    //   const park = await new NationalPark(body);
+    //   park.geometry = geoData.body.features[0].geometry;
+    //   park.images = req.files.map((file) => ({
+    //     url: file.path,
+    //     filename: file.filename,
+    //   }));
+    //   park.author = req.user._id;
+
+    //   await park.save();
+    //   console.log(park);
+    //   req.flash("success", "Park created");
+    //   return res.redirect(`/parks/${park._id}`);
+    // })
+
     isLoggedIn,
     upload.array("image"),
     validatePark,
 
     asyncWrapper(async (req, res, next) => {
-      const body = req.body;
-
       const geoData = await geocoder
         .forwardGeocode({
-          query: body.location,
+          query: req.body.location,
           limit: 1,
         })
         .send();
 
-      if (!body) {
-        throw new ExpressError("Missing info", 400);
-        req.flash("error", "Campground not created");
-      }
-      const park = await new NationalPark(body);
-      park.images = req.files.map((file) => ({
-        url: file.path,
-        filename: file.filename,
+        console.log(geoData.body.features[0].geometry);
+
+      req.files.map((f) => ({ url: f.path, filename: f.filename }));
+      const park = new NationalPark(req.body);
+      park.geometry = geoData.body.features[0].geometry;
+      park.images = req.files.map((f) => ({
+        url: f.path,
+        filename: f.filename,
       }));
       park.author = req.user._id;
-
       await park.save();
-      req.flash("success", "Campground created");
-      res.redirect(`/parks/${park._id}`);
+      req.flash("success", "park created");
+      res.redirect("/parks");
     })
   );
 
@@ -79,13 +104,12 @@ router
   )
   .put(
     isLoggedIn,
-    validatePark,
     isOwner,
     upload.array("image"),
+    validatePark,
     asyncWrapper(async (req, res, next) => {
       const { id } = req.params;
       const park = await NationalPark.findByIdAndUpdate(id, { ...req.body });
-
       const imgs = req.files.map((file) => ({
         url: file.path,
         filename: file.filename,
@@ -106,7 +130,7 @@ router
           },
         });
       }
-      req.flash("success", "Campground updated");
+      req.flash("success", "park updated");
       res.redirect(`/parks/${park._id}`);
     })
   )
@@ -116,7 +140,7 @@ router
     asyncWrapper(async (req, res, next) => {
       const { id } = req.params;
       await NationalPark.findByIdAndDelete(id);
-      req.flash("success", "Campground deleted");
+      req.flash("success", "park deleted");
       res.redirect("/parks");
     })
   );

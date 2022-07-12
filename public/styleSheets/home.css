@@ -1,0 +1,18 @@
+/** @format */
+
+.cover-container {
+  max-width: 60vw;
+}
+
+body {
+  height: 100vh;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("https://images.unsplash.com/photo-1627538589877-0a4fbbe18855?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGxha2UlMjBtb3JhaW5lfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=900&q=60");
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
+  background-position: center;
+  text-shadow: 4px 4px 2px rgba(0, 0, 0, 0.6);
+  box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+}

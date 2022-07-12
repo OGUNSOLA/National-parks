@@ -3,7 +3,7 @@
 const express = require("express");
 const router = express.Router();
 const Author = require("../models/author");
-const asyncWrapper = require("../utility/asyncError");
+const asyncWrapper = require("../utility/asyncWrapper");
 const expressError = require("../utility/expressError");
 const passport = require("passport");
 

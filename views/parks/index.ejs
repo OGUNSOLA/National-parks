@@ -1,11 +1,19 @@
 <% layout('layouts/boilerPlate') %>
-  <div id="cluster-map">
-  </div>
+  <link rel="stylesheet" href="/styleSheets/app.css">
+  <div id="cluster-map"></div>
+
   <% for(let park of parks){ %>
     <div class="card mb-3">
       <div class="row">
         <div class="col-md-4">
-          <img src="<%= park.images[0].url%>" alt="park" class="img-fluid">
+          <% if(park.images){ %>
+            <img src="<%= park.images[0].url%>" alt="park" class="img-fluid">
+            <%} else { %>
+              <img
+                src="https://res.cloudinary.com/dbb9ypmi0/image/upload/v1657074104/National%20Parks/cgjuah1j24lkk8qkj9ev.jpg"
+                alt="park" class="img-fluid">
+              <% } %>
+
         </div>
         <div class="col-md-8">
           <div class="card-body">
@@ -21,9 +29,9 @@
               </small>
             </p>
             <p class="card-text">
-              <small>
+              <!-- <small>
                 Author : <%=park.author.username%>
-              </small>
+              </small> -->
             </p>
             <p><a class="btn btn-primary" href="parks/<%=park._id%>">Show Details</a></p>
 
@@ -35,3 +43,9 @@
     </div>
 
     <%}%>
+
+      <script>
+        const mapboxToken = '<%-process.env.mapboxToken%>';
+        const parks = { features: <%-JSON.stringify(parks)%>};
+      </script>
+      <script src="/scripts/clusterMap.js"></script>

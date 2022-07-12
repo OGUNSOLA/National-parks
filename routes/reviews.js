@@ -2,7 +2,7 @@
 
 const express = require("express");
 const router = express.Router({ mergeParams: true });
-const asyncWrapper = require("../utility/asyncError");
+const asyncWrapper = require("../utility/asyncWrapper");
 const ExpressError = require("../utility/expressError");
 const NationalPark = require("../models/parks");
 const Review = require("../models/reviews");

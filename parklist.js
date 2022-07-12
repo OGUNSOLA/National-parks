@@ -48,8 +48,9 @@ const parks = [
     ],
     price: 10.5,
     author: "62c0afc0ae3e716aeff4b7ab",
-    long: -75.4,
-    lat: 40,
+    lat: 51.4968,
+    long: -115.9281,
+  
   },
   {
     name: "Bruce Peninsula National Park",
@@ -68,8 +69,8 @@ const parks = [
     ],
     price: 10.5,
     author: "62c0afc0ae3e716aeff4b7ab",
-    long: -75.4,
-    lat: 40,
+    lat: 45.2297,
+    long: -81.5250,
   },
   {
     name: "Fundy National Park",
@@ -88,8 +89,8 @@ const parks = [
     ],
     price: 10.5,
     author: "62c0afc0ae3e716aeff4b7ab",
-    long: -75.4,
-    lat: 40,
+    lat: 45.6138,
+    long: -65.0316,
   },
   {
     name: "Georgian Bay Islands National Park",
@@ -108,8 +109,8 @@ const parks = [
     ],
     price: 10.5,
     author: "62c0afc0ae3e716aeff4b7ab",
-    long: -75.4,
-    lat: 40,
+    lat: 44.8743,
+    long: -79.8700,
   },
   {
     name: "Kootenay National Park",
@@ -128,8 +129,8 @@ const parks = [
     ],
     price: 10.5,
     author: "62c0afc0ae3e716aeff4b7ab",
-    long: -75.4,
-    lat: 40,
+    lat: 50.9769,
+    long: -115.9592,
   },
 ];
 
