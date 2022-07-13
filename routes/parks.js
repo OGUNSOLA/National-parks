@@ -63,7 +63,6 @@ router
         })
         .send();
 
-        console.log(geoData.body.features[0].geometry);
 
       req.files.map((f) => ({ url: f.path, filename: f.filename }));
       const park = new NationalPark(req.body);

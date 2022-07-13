@@ -20,7 +20,15 @@ const session = require("express-session");
 const flash = require("connect-flash");
 const Author = require("./models/author");
 const passport = require("passport");
+//const helmet = require("helmet");
+
 const LocalStrategy = require("passport-local");
+const mongoSanitize = require("express-mongo-sanitize");
+
+const dbURL = process.env.DB_url || "mongodb://localhost:27017/national-parks";
+//const dbURL = "mongodb://localhost:27017/national-parks";
+
+const MongoDBStore = require("connect-mongo")(session);
 
 app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
@@ -30,7 +38,7 @@ app.use(express.json());
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
-mongoose.connect("mongodb://localhost:27017/national-parks");
+mongoose.connect(dbURL);
 
 const db = mongoose.connection;
 db.once("error", console.error.bind(console, "connection error:"));
@@ -39,8 +47,15 @@ db.once("open", () => {
 });
 const secret = process.env.secret || "secret";
 
+const store = new MongoDBStore({
+  url: dbURL,
+  secret,
+  touchAfter: 24 * 60 * 60,
+});
+
 const sessionConfig = {
-  name: "mySessionId",
+  store,
+  name: "parkSessionId",
   secret: secret,
   resave: false,
   saveUninitialized: true,
@@ -57,6 +72,55 @@ app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(mongoSanitize());
+
+//app.use(helmet({ crossOriginEmbedderPolicy: false }));
+
+// const scriptSrcUrls = [
+//   "https://stackpath.bootstrapcdn.com",
+//   "https://api.tiles.mapbox.com",
+//   "https://api.mapbox.com",
+//   "https://kit.fontawesome.com",
+//   "https://cdnjs.cloudflare.com",
+//   "https://cdn.jsdelivr.net",
+// ];
+// const styleSrcUrls = [
+//   "https://kit-free.fontawesome.com",
+//   "https://stackpath.bootstrapcdn.com",
+//   "https://cdn.jsdelivr.net",
+//   "https://api.mapbox.com",
+//   "https://api.tiles.mapbox.com",
+//   "https://fonts.googleapis.com",
+//   "https://use.fontawesome.com",
+// ];
+// const connectSrcUrls = [
+//   "https://api.mapbox.com",
+//   "https://*.tiles.mapbox.com",
+//   "https://events.mapbox.com",
+// ];
+// const fontSrcUrls = [];
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     directives: {
+//       defaultSrc: [],
+//       connectSrc: ["'self'", ...connectSrcUrls],
+//       scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+//       styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+//       workerSrc: ["'self'", "blob:"],
+//       childSrc: ["blob:"],
+//       objectSrc: [],
+//       imgSrc: [
+//         "'self'",
+//         "blob:",
+//         "data:",
+//         "https://res.cloudinary.com/dbb9ypmi0/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
+//         "https://images.unsplash.com",
+//       ],
+//       fontSrc: ["'self'", ...fontSrcUrls],
+//     },
+//   })
+// );
+
 passport.use(new LocalStrategy(Author.authenticate()));
 passport.serializeUser(Author.serializeUser());
 passport.deserializeUser(Author.deserializeUser());
@@ -68,15 +132,13 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
 app.use("/", authorRouter);
 app.use("/parks", parksRouter);
 app.use("/parks/:id/reviews", reviewRouter);
 
-app.get("/", (req,res)=>{
-  res.render("home")
-  })
+app.get("/", (req, res) => {
+  res.render("home");
+});
 
 app.all("*", (req, res, next) => {
   next(new ExpressError("Page Not Found", 404));
